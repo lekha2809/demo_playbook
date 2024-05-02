@@ -5,6 +5,4 @@
   tasks:
     - name: Run demo task
       ping:
-    - name: debug task
-      debug:
-        msg: "{{ ansible_facts }}"
+
