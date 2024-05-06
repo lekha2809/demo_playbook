@@ -1,0 +1,5 @@
+- name: Copy sudoers file
+  ansible.builtin.copy:
+    src: sudoers
+    dest: /etc/sudoers
+    mode: "440"

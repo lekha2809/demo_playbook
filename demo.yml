@@ -1,8 +1,0 @@
----
-- name: demo playbook
-  hosts: all
-  become: yes
-  tasks:
-    - name: Run demo task
-      ping:
-

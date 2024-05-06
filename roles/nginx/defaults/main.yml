@@ -1,0 +1,2 @@
+nginx_http_port: "{{ http_port|default(80) }}"
+nginx_https_port: "{{ https_port|default(443) }}"

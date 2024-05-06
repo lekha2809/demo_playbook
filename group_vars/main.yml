@@ -1,0 +1,23 @@
+---
+RABBITMQ_ADMIN_USER: "admin"
+RABBITMQ_ADMIN_PASSWORD: "password"
+
+ESXI01_INVENTORY_HOSTNAME: 172.16.14.234
+ESXI02_INVENTORY_HOSTNAME: 172.16.14.230
+ESXI03_INVENTORY_HOSTNAME: 172.16.14.231
+
+ESXI_MQ_MASTER_NAME: esxi01
+ESXI_MQ_WORKER_01_NAME: esxi02
+ESXI_MQ_WORKER_02_NAME: esxi03
+
+
+ESXI_SERVER_NAME: |-
+  {%- if inventory_hostname in ESXI01_INVENTORY_HOSTNAME -%}
+    esxi01
+  {%- elif inventory_hostname in ESXI02_INVENTORY_HOSTNAME -%}
+    esxi02
+  {%- elif inventory_hostname in ESXI03_INVENTORY_HOSTNAME -%}
+    esxi03
+  {%- else -%}
+    {{ ansible_hostname }}
+  {%- endif -%}

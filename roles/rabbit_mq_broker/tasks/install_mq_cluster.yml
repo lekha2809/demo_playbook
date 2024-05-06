@@ -1,0 +1,60 @@
+---
+- hosts: mq-workers
+  become: yes
+  vars_files: ../../../group_vars/main.yml
+  tasks:
+    - name: change mode of erlang cookie file
+      ansible.builtin.file:
+        path: /var/lib/rabbitmq/.erlang.cookie
+        mode: 600
+
+    - name: copy rabbitmq cookie from master to all rabbitmq servers
+      ansible.builtin.copy:
+        src: ../config/.erlang.cookie
+        dest: /var/lib/rabbitmq/.erlang.cookie
+      notify: restart rabbit-mq
+    
+    - name: stop rabbitmq application
+      ansible.builtin.shell: rabbitmqctl stop_app
+
+    - name: reset rabbitmq 
+      shell: rabbitmqctl reset
+    
+    - name: join the node to cluster
+      shell: rabbitmqctl join_cluster rabbit@{{ ESXI_MQ_MASTER_NAME }}
+
+    - name: start rabbitmq application
+      shell: rabbitmqctl start_app
+
+- hosts: mq-cluster
+  become: yes
+  tasks:
+    - name: configure rabbitmq ha policy
+      community.rabbitmq.rabbitmq_policy:
+        name: HA
+        pattern: .*
+        tags:
+          ha-mode: all
+
+    - name: Enable rabbitmq plugin
+      ansible.builtin.rabbitmq_plugin:
+        names: rabbitmq_management
+        state: enabled
+      notify:
+        - restart rabbitmq
+
+- hosts: mq-master
+  become: yes
+  vars_files:
+    - ../vars/settings.yml
+  tasks:
+    - name: Add rabbitmq user admin
+      ansible.builtin.rabbitmq_user:
+        user: "{{ RABBITMQ_ADMIN_USER | default(admin) }}"
+        password: "{{ RABBITMQ_ADMIN_PASSWORD | default(galaxyplay) }}"
+        vhost: /
+        tags: administrator
+        configure_priv: .*
+        read_priv: .*
+        write_priv: .*
+        state: present

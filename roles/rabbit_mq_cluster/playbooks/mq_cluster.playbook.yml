@@ -1,0 +1,16 @@
+- hosts: mq-cluster
+  become: yes
+  tasks:
+    - name: configure rabbitmq ha policy
+      community.rabbitmq.rabbitmq_policy:
+        name: HA
+        pattern: .*
+        tags:
+          ha-mode: all
+
+    - name: Enable rabbitmq plugin
+      ansible.builtin.rabbitmq_plugin:
+        names: rabbitmq_management
+        state: enabled
+      # notify:
+      #   - restart rabbitmq

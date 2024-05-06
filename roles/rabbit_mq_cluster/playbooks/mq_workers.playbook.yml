@@ -1,0 +1,34 @@
+---
+- hosts: mq-workers
+  become: yes
+  vars_files: /data/ansible/basic_installation/group_vars/main.yml
+  tasks:
+    # - name: change mode of erlang cookie file
+    #   ansible.builtin.file:
+    #     path: /var/lib/rabbitmq/.erlang.cookie
+    #     mode: 400
+    - name: change mode of erlang cookie file
+      ansible.builtin.shell: chmod 400 /var/lib/rabbitmq/.erlang.cookie
+      warn: false
+
+    - name: copy rabbitmq cookie from master to all rabbitmq servers
+      ansible.builtin.copy:
+        src: ../config/.erlang.cookie
+        dest: /var/lib/rabbitmq/.erlang.cookie
+    
+    - name: restart rabbit-mq
+      ansible.builtin.service:
+        name: rabbitmq-server
+        state: restarted
+    
+    - name: stop rabbitmq application
+      ansible.builtin.shell: rabbitmqctl stop_app
+
+    - name: reset rabbitmq 
+      ansible.builtin.shell: rabbitmqctl reset
+    
+    - name: join the node to cluster
+      ansible.builtin.shell: rabbitmqctl join_cluster rabbit@{{ ESXI_MQ_MASTER_NAME }}
+
+    - name: start rabbitmq application
+      ansible.builtin.shell: rabbitmqctl start_app

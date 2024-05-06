@@ -1,0 +1,14 @@
+- name: Create user 
+  ansible.builtin.user:
+    name: "{{ item.username }}"
+    shell: /bin/bash
+    group: sys
+    create_home: yes
+    comment: "create with ansible"
+  with_items: "{{ users }}"
+
+- name: Add user's authorized keys
+  ansible.builtin.authorized_key:
+    user: "{{ item.username }}"
+    key: "{{ lookup('file', 'files/{{ item.username }}.pub') }}"
+  with_items: "{{ users }}"

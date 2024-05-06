@@ -1,0 +1,14 @@
+- hosts: mq-master
+  become: yes
+  vars_files: /data/ansible/basic_installation/group_vars/main.yml
+  tasks:
+    - name: Add rabbitmq user admin
+      ansible.builtin.rabbitmq_user:
+        user: "{{ RABBITMQ_ADMIN_USER | default(admin) }}"
+        password: "{{ RABBITMQ_ADMIN_PASSWORD | default(galaxyplay) }}"
+        vhost: /
+        tags: administrator
+        configure_priv: .*
+        read_priv: .*
+        write_priv: .*
+        state: present

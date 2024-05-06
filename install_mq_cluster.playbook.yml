@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  vars_files: group_vars/main.yml
+  tasks:
+- name: Configuration mq worker nodes
+  ansible.builtin.import_playbook: roles/rabbit_mq_cluster/playbooks/mq_workers.playbook.yml
+- name: Add HA policy & Enable rabbitmq plugin 
+  ansible.builtin.import_playbook: roles/rabbit_mq_cluster/playbooks/mq_cluster.playbook.yml
+- name: Create admin user
+  ansible.builtin.import_playbook: roles/rabbit_mq_cluster/playbooks/mq_master.playbook.yml
+        

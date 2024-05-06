@@ -1,0 +1,27 @@
+- name: Copy Rsyslog Config
+  ansible.builtin.copy:
+    src: nginxlog.conf
+    dest: /etc/rsyslog.d/nginxlog.conf
+    mode: '0644'
+
+- name: Check if $ModLoad imfile is already defined
+  ansible.builtin.lineinfile:
+    state: absent
+    path: "/etc/rsyslog.conf"
+    regexp: "^$ModLoad imfile"
+  check_mode: true
+  changed_when: false
+  register: check
+
+- name: Insert "$ModLoad imfile" into rsyslog.conf
+  ansible.builtin.lineinfile:
+    state: present
+    path: "/etc/rsyslog.conf"
+    insertbefore: BOF
+    line: "$ModLoad imfile"
+  when: check.found == 0
+
+- name: Restart rsyslog
+  ansible.builtin.service:
+    name: rsyslog
+    state: restarted

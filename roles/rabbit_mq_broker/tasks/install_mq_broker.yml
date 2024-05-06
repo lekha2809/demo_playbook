@@ -1,0 +1,54 @@
+- name: Download esl-erlang package
+  ansible.builtin.get_url:
+    url: http://repo-esxi.glxplay.io/CentOs/7/rabbitmq/erlang-23.3.4.18-1.el7.x86_64.rpm
+    dest: /opt/erlang-23.3.4.18-1.el7.x86_64.rpm
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install esl-erlang package
+  ansible.builtin.yum:
+    name: /opt/erlang-23.3.4.18-1.el7.x86_64.rpm
+    state: present
+
+- name: Download rabbit repo
+  ansible.builtin.get_url:
+    url: http://repo-esxi.glxplay.io/CentOs/7/rabbitmq/rabbitmq-server-3.10.0-1.el7.noarch.rpm
+    dest: /opt/rabbitmq-server-3.10.0-1.el7.noarch.rpm
+    owner: root
+    mode: 0755
+
+- name: Install rabbitmq
+  ansible.builtin.yum:
+    name: /opt/rabbitmq-server-3.10.0-1.el7.noarch.rpm
+    state: present
+
+
+- name: Start rabbitmq-server
+  ansible.builtin.service:
+    name: rabbitmq-server
+    state: started
+
+# - name: Enable rabbitmq plugin
+#   ansible.builtin.rabbitmq_plugin:
+#     names: rabbitmq_management
+#     state: enabled
+#   notify:
+#     - restart rabbitmq
+
+# - name: Add rabbitmq user admin
+#   ansible.builtin.rabbitmq_user:
+#     user: "admin"
+#     password: "password"
+#     vhost: /
+#     tags: administrator
+#     configure_priv: .*
+#     read_priv: .*
+#     write_priv: .*
+#     state: present
+
+# If it's not necessary use rabbitmq_exporter uncoment 
+# - name: remove default guest user
+#   ansible.builtin.rabbitmq_user: 
+#     user: guest
+#     state: absent

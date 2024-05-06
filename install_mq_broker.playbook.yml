@@ -1,0 +1,7 @@
+- name: install rabbit-mq brokers servers
+  hosts: mq-cluster
+  become: yes
+  become_user: root
+
+  roles:
+    - rabbit_mq_broker

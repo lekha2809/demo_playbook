@@ -1,0 +1,6 @@
+users: 
+  - username: khalh
+    use_sudo: true
+
+  - username: khanhnh
+    use_sudo: true

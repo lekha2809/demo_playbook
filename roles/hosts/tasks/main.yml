@@ -1,0 +1,5 @@
+- name: Copy file hosts
+  ansible.builtin.copy:
+    src: hosts
+    dest: /etc/hosts
+    mode: "644"

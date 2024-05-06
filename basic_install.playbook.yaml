@@ -1,0 +1,14 @@
+- name: Basic Install
+  hosts: all
+  become: yes
+  become_user: root
+
+  roles:
+    - base_setup
+    - sudoers
+    - sysctl
+    - selinux_firewall_local
+    - chrony
+    - create_users
+    - rsyslog
+    - hosts
