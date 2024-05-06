@@ -7,8 +7,9 @@
     - base_setup
     - sudoers
     - sysctl
-    - selinux_firewall_local
     - chrony
     - create_users
     - rsyslog
     - hosts
+    - selinux_firewall_local
+    - reboot
